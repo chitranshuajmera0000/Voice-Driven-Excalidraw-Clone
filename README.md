@@ -50,7 +50,7 @@ Follow these steps to set up the project locally.
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/your-user/your-repo.git
+   git clone https://github.com/chitranshuajmera0000/Voice-Driven-Excalidraw-Clone
    cd your-repo
    ```
 
@@ -90,4 +90,4 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 Project maintainer on GitHub.
 
-Project Link: https://github.com/your-user/your-repo
+Project Link: https://voice-driven-excalidraw-clone.vercel.app/
