@@ -42,7 +42,7 @@ function extractLabelText(label: any): string {
 // Helper: Extract and normalize flowchart content for comparison
 function extractFlowchartContent(content: string | string[]): string {
   const contentStr = Array.isArray(content) ? content.join('\n') : content;
-  
+
   // Normalize whitespace and remove comments
   return contentStr
     .replace(/\/\*[\s\S]*?\*\//g, '') // Remove /* */ comments
@@ -56,7 +56,7 @@ function extractFlowchartContent(content: string | string[]): string {
 // Helper: Extract and normalize note content for comparison
 function extractNoteContent(content: string | string[]): string {
   const contentStr = Array.isArray(content) ? content.join(' ') : content;
-  
+
   // Normalize and clean the content for better comparison
   return contentStr
     .toLowerCase()
@@ -72,18 +72,18 @@ function findSimilarNote(
   threshold: number = 0.7
 ): { groupId: string; isExactMatch: boolean } | null {
   const normalizedContent = extractNoteContent(content);
-  
+
   // Get all existing notes (elements with noteElement = true)
   const existingNotes = new Map<string, { content: string; title: string }>();
-  
+
   // First pass: collect all note content and titles
   existingElements.forEach(el => {
     if ((el as any).noteElement === true && el.groupIds && el.groupIds.length > 0) {
       const groupId = el.groupIds[el.groupIds.length - 1];
       if (!groupId.startsWith('group_')) return;
-      
+
       const noteData = existingNotes.get(groupId) || { content: '', title: '' };
-      
+
       // For text elements that are part of notes
       if (el.type === 'text' && el.text) {
         // Check if this is a title (first text element in the note)
@@ -97,45 +97,45 @@ function findSimilarNote(
       else if (el.type === 'rectangle' && (el as any).label) {
         noteData.content += ' ' + (el as any).label;
       }
-      
+
       existingNotes.set(groupId, noteData);
     }
   });
-  
+
   // If we have a single note with a matching title, use that
   const contentStr = Array.isArray(content) ? content.join(' ') : content;
   const potentialTitle = contentStr.split('\n')[0]?.trim();
-  
+
   for (const [groupId, noteData] of existingNotes.entries()) {
     // Check for exact title match first
-    if (noteData.title && potentialTitle && 
-        noteData.title.toLowerCase() === potentialTitle.toLowerCase()) {
+    if (noteData.title && potentialTitle &&
+      noteData.title.toLowerCase() === potentialTitle.toLowerCase()) {
       return { groupId, isExactMatch: true };
     }
   }
-  
+
   // If no exact title match, find the most similar note by content
   let bestMatch: { groupId: string; similarity: number } | null = null;
-  
+
   for (const [groupId, noteData] of existingNotes.entries()) {
     const fullNoteContent = (noteData.title + ' ' + noteData.content).trim();
     if (!fullNoteContent) continue;
-    
+
     const similarity = stringSimilarity.compareTwoStrings(
       normalizedContent,
       extractNoteContent(fullNoteContent)
     );
-    
+
     // If we find an exact match, return immediately
     if (similarity >= 0.95) {
       return { groupId, isExactMatch: true };
     }
-    
+
     if (similarity >= threshold && (!bestMatch || similarity > bestMatch.similarity)) {
       bestMatch = { groupId, similarity };
     }
   }
-  
+
   return bestMatch ? { groupId: bestMatch.groupId, isExactMatch: false } : null;
 }
 
@@ -146,45 +146,45 @@ function findSimilarFlowchart(
   threshold: number = 0.7
 ): string | null {
   const normalizedContent = extractFlowchartContent(content);
-  
+
   // Get all existing flowcharts (elements with type 'arrow' or 'rectangle' that are part of a diagram)
   const existingFlowcharts = new Map<string, string>(); // groupId -> content
-  
+
   // First pass: collect all text content from existing diagrams
   existingElements.forEach(el => {
     if (el.groupIds && el.groupIds.length > 0 && (el.type === 'text' || el.type === 'rectangle' || el.type === 'arrow')) {
       const groupId = el.groupIds[el.groupIds.length - 1];
       if (!groupId.startsWith('group_')) return;
-      
+
       let currentContent = existingFlowcharts.get(groupId) || '';
-      
+
       if (el.type === 'text' && el.text) {
         currentContent += ' ' + el.text;
       } else if (el.type === 'rectangle' && (el as any).label) {
         currentContent += ' ' + (el as any).label;
       }
-      
+
       existingFlowcharts.set(groupId, currentContent);
     }
   });
-  
+
   // Find the most similar existing flowchart
   let bestMatch: { groupId: string; similarity: number } | null = null;
-  
+
   // Convert Map to array for iteration
   Array.from(existingFlowcharts.entries()).forEach(([groupId, existingContent]) => {
     if (!existingContent.trim()) return;
-    
+
     const similarity = stringSimilarity.compareTwoStrings(
       normalizedContent,
       extractFlowchartContent(existingContent)
     );
-    
+
     if (similarity >= threshold && (!bestMatch || similarity > bestMatch.similarity)) {
       bestMatch = { groupId, similarity };
     }
   });
-  
+
   return bestMatch?.groupId || null;
 }
 
@@ -202,10 +202,10 @@ function createTextElement(opts: {
 }) {
   const now = Date.now()
   const fontSize = opts.fontSize ?? 20 // Medium font size for better visibility
-  
+
   // Ensure text is always a string
   const text = typeof opts.text === 'string' ? opts.text : (opts.text != null ? String(opts.text) : 'Empty text')
-  
+
   // Calculate approximate dimensions based on text
   const lines = text.split('\n')
   const maxLineLength = Math.max(...lines.map(l => l.length), 1)
@@ -557,7 +557,6 @@ export async function handleAIResponse(
   transcript?: string,
   shouldUpdate?: boolean
 ): Promise<void> {
-  console.log('handleAIResponse called with:', { response, excalidrawAPI: !!excalidrawAPI, shouldUpdate })
 
   if (!excalidrawAPI) {
     console.error('Excalidraw API not available')
@@ -606,17 +605,16 @@ export async function handleAIResponse(
   if (response.type === 'note') {
     let contentText = Array.isArray(response.content)
       ? response.content.map((line) => {
-          // Ensure each line starts with bullet point
-          const trimmed = String(line).trim()
-          return trimmed.startsWith('•') ? trimmed : `• ${trimmed}`
-        }).join('\n')
+        // Ensure each line starts with bullet point
+        const trimmed = String(line).trim()
+        return trimmed.startsWith('•') ? trimmed : `• ${trimmed}`
+      }).join('\n')
       : response.content
-      
+
     // Check if we should update an existing note instead of creating a new one
     if (!shouldUpdate && !response.groupId) {
       const similarNote = findSimilarNote(contentText, existingElements);
       if (similarNote) {
-        console.log(`Found similar note with groupId: ${similarNote.groupId}, updating instead of creating new`);
         response.groupId = similarNote.groupId;
         shouldUpdate = true;
       }
@@ -655,7 +653,6 @@ export async function handleAIResponse(
     const shouldUpdateNote = shouldUpdate && response.groupId
 
     if (shouldUpdateNote && response.groupId) {
-      console.log('Refreshing note for groupId', response.groupId)
       const filteredElements = existingElements.filter((el: any) => {
         const isSameGroup = el.groupIds && Array.isArray(el.groupIds) && el.groupIds.includes(response.groupId!)
         const isNoteElement = (el as any).noteElement === true
@@ -669,7 +666,7 @@ export async function handleAIResponse(
         appState: {},
         storeAction: 'capture'
       })
-      
+
       // Wait for Excalidraw to process the deletion
       await new Promise(resolve => setTimeout(resolve, 100))
     }
@@ -678,11 +675,11 @@ export async function handleAIResponse(
     // Calculate dimensions for the text content
     const lines = contentText.split('\n')
     const maxLineLength = Math.max(...lines.map(l => l.length), 1)
-    
+
     // Calculate text dimensions - let it be generous to avoid clipping
     const textWidth = Math.max(400, maxLineLength * 11)
     const textHeight = Math.max(80, lines.length * 28)
-    
+
     // Rectangle should be larger to accommodate padding
     const textPaddingX = 20
     const textPaddingY = 15
@@ -712,7 +709,7 @@ export async function handleAIResponse(
       roundness: { type: 3 },
     })
     rect.groupIds = groupIds
-    ;(rect as any).noteElement = true
+      ; (rect as any).noteElement = true
 
     // Create text element - DON'T set explicit width/height, let Excalidraw calculate it
     // This prevents text clipping issues
@@ -728,7 +725,7 @@ export async function handleAIResponse(
 
     // Add groupId to elements for grouping
     textElement.groupIds = groupIds
-    ;(textElement as any).noteElement = true
+      ; (textElement as any).noteElement = true
 
     // Optional heading above the note for better readability
     let headingElement: ExcalidrawElement | null = null
@@ -744,7 +741,7 @@ export async function handleAIResponse(
         verticalAlign: 'middle',
       })
       headingElement.groupIds = groupIds
-      ;(headingElement as any).noteElement = true
+        ; (headingElement as any).noteElement = true
     }
 
     // Add text above rectangle visually (rectangle first so it's behind)
@@ -752,15 +749,14 @@ export async function handleAIResponse(
       ? [...currentElements, rect, headingElement, textElement]
       : [...currentElements, rect, textElement]
 
-    console.log('Updating scene with new elements:', newElements.length)
-    
+
     // First update - add the elements
     excalidrawAPI.updateScene({
       elements: newElements,
       appState: {},
       storeAction: 'capture'
     })
-    
+
     // CRITICAL: Use requestAnimationFrame to ensure Excalidraw processes the first update
     // before we force the re-render
     requestAnimationFrame(() => {
@@ -779,7 +775,7 @@ export async function handleAIResponse(
           }
           return el
         })
-        
+
         excalidrawAPI.updateScene({
           elements: forceRenderElements,
           appState: {},
@@ -787,21 +783,18 @@ export async function handleAIResponse(
         })
       })
     })
-    
-    console.log('Note elements added to scene')
+
   } else if (response.type === 'diagram') {
     try {
       const diagramContent = Array.isArray(response.content)
         ? response.content.join('\n')
         : response.content
 
-      console.log('Attempting to parse Mermaid diagram:', diagramContent.substring(0, 200))
-      
+
       // Check if we should update an existing flowchart instead of creating a new one
       if (!shouldUpdate && !response.groupId) {
         const similarFlowchartId = findSimilarFlowchart(diagramContent, existingElements);
         if (similarFlowchartId) {
-          console.log(`Found similar flowchart with groupId: ${similarFlowchartId}, updating instead of creating new`);
           response.groupId = similarFlowchartId;
           shouldUpdate = true;
         }
@@ -813,28 +806,27 @@ export async function handleAIResponse(
         parsed = await parseMermaidToExcalidraw(diagramContent)
       } catch (parseError) {
         console.error('Mermaid parse error:', parseError)
-        
+
         // Try to clean up common issues in Mermaid syntax
         let cleanedContent = diagramContent
-        
+
         // Fix 1: Remove parentheses from node labels (common cause of "got 'PS'" error)
         cleanedContent = cleanedContent.replace(/\[([^\]]*)\(([^\)]*)\)([^\]]*)\]/g, '[$1 - $2 - $3]')
-        
+
         // Fix 2: Escape special characters in labels
         cleanedContent = cleanedContent.replace(/\[([^\]]*["'])/g, (match, group) => {
           return '[' + group.replace(/["']/g, '')
         })
-        
+
         // Fix 3: Remove any invalid characters that might cause parsing issues
         cleanedContent = cleanedContent.replace(/[^\x20-\x7E\n]/g, '')
-        
-        console.log('Retrying with cleaned content:', cleanedContent.substring(0, 200))
-        
+
+
         try {
           parsed = await parseMermaidToExcalidraw(cleanedContent)
         } catch (secondError) {
           console.error('Second parse attempt failed:', secondError)
-          
+
           // If still failing, create a simple error note instead
           throw new Error(`Unable to parse diagram. Mermaid syntax error: ${parseError.message || parseError}`)
         }
@@ -850,7 +842,6 @@ export async function handleAIResponse(
         throw new Error('No elements generated from Mermaid diagram')
       }
 
-      console.log('Successfully parsed diagram with', elements.length, 'elements')
 
       // Normalize parsed elements: ensure required properties and unique ids
       const groupIds = response.groupId ? [response.groupId] : []
@@ -880,23 +871,21 @@ export async function handleAIResponse(
           // keep the note elements so checklist updates are preserved.
           return !(isSameGroup && !isNoteElement)
         })
-        
+
         // If we're updating an existing diagram, make sure we have the latest elements
         if (filtered.length !== existingElements.length) {
-          console.log(`Removing ${existingElements.length - filtered.length} old diagram elements for update`);
         }
 
         if (filtered.length !== existingElements.length) {
-          console.log('Updating existing diagram: removing previous elements for groupId', response.groupId)
           excalidrawAPI.updateScene({
             elements: filtered,
             appState: {},
             storeAction: 'capture'
           })
-          
+
           // Wait for Excalidraw to process the deletion
           await new Promise(resolve => setTimeout(resolve, 100))
-          
+
           baseElements = excalidrawAPI.getSceneElements() || []
         }
       }
@@ -975,13 +964,13 @@ export async function handleAIResponse(
           normalizedEl.verticalAlign = 'middle' // ALWAYS middle align text in shapes - force override
           if (el.containerId !== undefined) normalizedEl.containerId = el.containerId
           if (el.lineHeight === undefined) normalizedEl.lineHeight = 1.25
-          
+
           // CRITICAL: Set baseline property for text to render properly
           normalizedEl.baseline = normalizedEl.fontSize
-          
+
           // Ensure autoResize is set properly
           normalizedEl.autoResize = normalizedEl.containerId ? false : true
-          
+
           // Force version to 3+ to ensure re-render
           normalizedEl.version = Math.max((el.version ?? 1) + 1, 3)
         } else if (normalizedEl.type === 'rectangle' || normalizedEl.type === 'diamond' || normalizedEl.type === 'ellipse') {
@@ -1017,22 +1006,10 @@ export async function handleAIResponse(
       })
 
       // Log elements for debugging
-      console.log('Normalized elements:', normalized.map((el: any) => ({
-        id: el.id,
-        type: el.type,
-        text: el.text,
-        label: el.label,
-        containerId: el.containerId,
-        boundElements: el.boundElements
-      })))
+
 
       // Also log raw elements to see structure
-      console.log('Raw elements sample:', elements.slice(0, 2).map((el: any) => ({
-        type: el.type,
-        label: el.label,
-        text: el.text,
-        boundElements: el.boundElements
-      })))
+
 
       // Separate text elements from shape elements
       const textElements = normalized.filter((el: any) => el.type === 'text')
@@ -1051,25 +1028,25 @@ export async function handleAIResponse(
             textEl.y = container.y
             textEl.width = container.width || 100
             textEl.height = container.height || 100
-            
+
             // FORCE center alignment - override any existing alignment
             textEl.textAlign = 'center'
             textEl.verticalAlign = 'middle'
-            
+
             // Ensure these properties are set for proper rendering
             textEl.autoResize = false
             if (!textEl.originalText) {
               textEl.originalText = textEl.text || ''
             }
-            
+
             // Ensure lineHeight is set for proper vertical spacing
             if (!textEl.lineHeight) {
               textEl.lineHeight = 1.25
             }
-            
+
             // CRITICAL: Set baseline for proper text rendering
             textEl.baseline = textEl.fontSize || 20
-            
+
             // Force update to ensure proper rendering with higher version number
             textEl.updated = Date.now()
             textEl.version = Math.max((textEl.version || 1) + 1, 3)
@@ -1120,24 +1097,24 @@ export async function handleAIResponse(
             // Excalidraw sometimes needs these explicitly set
             textElement.autoResize = false
             textElement.originalText = labelText
-            
+
             // FORCE center alignment - override any defaults
             textElement.textAlign = 'center'
             textElement.verticalAlign = 'middle'
-            
+
             // Ensure lineHeight is set
             if (!textElement.lineHeight) {
               textElement.lineHeight = 1.25
             }
-            
+
             // Ensure fontFamily is set
             if (!textElement.fontFamily) {
               textElement.fontFamily = 1
             }
-            
+
             // CRITICAL: Set baseline for proper text rendering
             textElement.baseline = fontSize
-            
+
             // Force update to ensure proper rendering with higher version
             textElement.updated = Date.now()
             // Ensure version starts at 3 for immediate render
@@ -1173,8 +1150,6 @@ export async function handleAIResponse(
           typeof el.width === 'number' && typeof el.height === 'number' && el.type
       })
 
-      console.log('Updating scene with diagram elements:', validElements.length)
-      console.log('Text elements:', validElements.filter((el: any) => el.type === 'text').length)
 
       // Optional heading above the diagram for better readability
       if (response.title && typeof response.title === 'string' && response.title.trim()) {
@@ -1210,7 +1185,7 @@ export async function handleAIResponse(
         requestAnimationFrame(() => {
           const currentElements = excalidrawAPI.getSceneElements() || []
           const textElementIds = validElements.filter((v: any) => v.type === 'text').map((v: any) => v.id)
-          
+
           const forceRenderElements = currentElements.map((el: any) => {
             // Only update text elements that were just added
             if (el.type === 'text' && textElementIds.includes(el.id)) {
@@ -1224,7 +1199,7 @@ export async function handleAIResponse(
             }
             return el
           })
-          
+
           excalidrawAPI.updateScene({
             elements: forceRenderElements,
             appState: {},
@@ -1233,7 +1208,6 @@ export async function handleAIResponse(
         })
       })
 
-      console.log('Diagram elements added to scene')
 
     } catch (error) {
       console.error('Error rendering diagram:', error)
@@ -1312,7 +1286,6 @@ export async function handleAIResponse(
         storeAction: 'capture'
       })
 
-      console.log('Error message displayed to user')
     }
   }
 }

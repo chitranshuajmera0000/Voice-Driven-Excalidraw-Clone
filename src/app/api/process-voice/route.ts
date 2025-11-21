@@ -194,7 +194,6 @@ Analyze the transcript. If it requires updating previous work, merge the new req
       aiResponse = JSON.parse(cleanedJson)
     } catch (e) {
       console.error('JSON Parse Failed:', e)
-      console.log('Raw Content:', rawContent)
       
       // Fallback: Try to salvage text if JSON fails completely
       aiResponse = {

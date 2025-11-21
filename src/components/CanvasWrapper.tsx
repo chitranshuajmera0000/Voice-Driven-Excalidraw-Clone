@@ -16,13 +16,11 @@ export function CanvasWrapper() {
 
   // Callback invoked by Excalidraw when the API is ready
   const handleExcalidrawAPI = useCallback((api: any) => {
-    console.log('Excalidraw API callback invoked', api)
     if (api) {
       setExcalidrawAPI(api)
       try {
         if (typeof api.getSceneElements === 'function' && typeof api.updateScene === 'function') {
           ;(window as any).excalidrawAPI = api
-          console.log('Excalidraw API exposed globally')
         } else {
           console.warn('Excalidraw API does not have expected methods', api)
         }

@@ -75,7 +75,7 @@ export function useVoiceRecognition(options?: UseVoiceRecognitionOptions) {
 
     recognition.onstart = () => {
       if (!isMounted.current) return
-      console.log('Speech recognition started')
+
       setIsListening(true)
       setTranscript('')
       transcriptRef.current = ''
@@ -103,7 +103,6 @@ export function useVoiceRecognition(options?: UseVoiceRecognitionOptions) {
       console.error('Speech recognition error:', event.error)
       // Don't stop on certain recoverable errors
       if (event.error === 'no-speech' || event.error === 'audio-capture') {
-        console.log('Recoverable error, continuing...')
         return
       }
       stopListening()
@@ -114,7 +113,6 @@ export function useVoiceRecognition(options?: UseVoiceRecognitionOptions) {
 
       // Only auto-restart if we're still supposed to be listening
       if (isListening) {
-        console.log('Speech recognition service disconnected, attempting to reconnect...')
         try {
           recognition.start()
           return // Don't update state if we're reconnecting
@@ -124,7 +122,6 @@ export function useVoiceRecognition(options?: UseVoiceRecognitionOptions) {
       }
 
       // Only update state if we're actually stopping
-      console.log('Speech recognition stopped')
       setIsListening(false)
       recognitionRef.current = null
       if (silenceTimeoutRef.current) {
@@ -134,7 +131,6 @@ export function useVoiceRecognition(options?: UseVoiceRecognitionOptions) {
     }
 
     try {
-      console.log('Starting speech recognition...')
       recognition.start()
     } catch (e) {
       console.error('Failed to start recognition, will retry...', e)

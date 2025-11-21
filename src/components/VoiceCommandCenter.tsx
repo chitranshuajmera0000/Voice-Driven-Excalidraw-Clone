@@ -270,7 +270,6 @@ export function VoiceCommandCenter() {
 
         // TOPIC-BASED UPDATE DETECTION
         if (currentTopic) {
-          console.log('📝 Detected topic:', currentTopic);
           
           // Check if this topic already exists
           const existingTopics = Array.from(topicToGroupId.keys());
@@ -291,14 +290,12 @@ export function VoiceCommandCenter() {
               // This is an update to an existing topic
               isUpdate = true;
               groupIdToUse = topicToGroupId.get(matchingTopic)!;
-              console.log(`♻️ UPDATING existing topic "${matchingTopic}" with groupId:`, groupIdToUse);
               
               // Update the topic mapping to include the new phrasing
               if (currentTopic !== matchingTopic) {
                 const newMap = new Map(topicToGroupId);
                 newMap.set(currentTopic, groupIdToUse);
                 setTopicToGroupId(newMap);
-                console.log(`🔄 Added alternative topic name: "${currentTopic}" -> "${matchingTopic}"`);
               }
             } else {
               // Same topic but explicitly a new instance
@@ -307,7 +304,6 @@ export function VoiceCommandCenter() {
               const newMap = new Map(topicToGroupId);
               newMap.set(currentTopic, groupIdToUse);
               setTopicToGroupId(newMap);
-              console.log(`🆕 NEW instance of topic "${currentTopic}" with groupId:`, groupIdToUse);
             }
           } else {
             // Brand new topic
@@ -330,7 +326,6 @@ export function VoiceCommandCenter() {
             }
             
             setTopicToGroupId(newMap);
-            console.log(`🆕 NEW topic "${currentTopic}" with groupId:`, groupIdToUse);
           }
         } else {
           // No topic detected - fall back to old logic
@@ -354,13 +349,10 @@ export function VoiceCommandCenter() {
           if (!isUpdate) {
             groupIdToUse = `group_${Date.now()}`
             setCurrentGroupId(groupIdToUse)
-            console.log(`🆕 NEW component (no topic) with groupId:`, groupIdToUse)
           } else {
-            console.log(`♻️ UPDATING component (no topic) with groupId:`, groupIdToUse)
           }
         }
 
-        console.log('🎯 Final decision:', { isUpdate, groupIdToUse, currentTopic })
 
         await handleAIResponse({
           ...aiResponse,
