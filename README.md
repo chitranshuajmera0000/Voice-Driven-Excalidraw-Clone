@@ -1,58 +1,54 @@
 # 🎨 Voice-Driven Excalidraw Clone
 
-> A virtual whiteboard that listens to you. Draw, move, and edit shapes using just your voice.
+> A virtual whiteboard that listens to you. Create diagrams, notes, and flowcharts using natural language voice commands.
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![React](https://img.shields.io/badge/React-20232A?style=flat&logo=react&logoColor=61DAFB)
+![Next.js](https://img.shields.io/badge/Next.js-black?style=flat&logo=next.js&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=flat&logo=typescript&logoColor=white)
 ![Status](https://img.shields.io/badge/Status-Active_Development-green)
 
 ## 📖 Overview
 
-**Voice-Driven Excalidraw Clone** is an open-source drawing tool inspired by [Excalidraw](https://excalidraw.com), enhanced with **Voice Command capabilities**. It allows users to sketch hand-drawn-like diagrams, wireframes, and illustrations while controlling the canvas hands-free.
+**Voice-Driven Excalidraw Clone** is an intelligent drawing tool that integrates **Excalidraw** with a powerful **AI Voice Assistant**. Instead of manually selecting tools, you can simply describe what you want—whether it's a flowchart, a checklist, or a system diagram—and the AI will generate it for you on the canvas.
 
-Whether you are presenting, teaching, or just brainstorming, this tool lets you say *"Draw a rectangle"* or *"Change color to red"* to speed up your workflow.
+It leverages **Mistral AI** (or OpenAI) to interpret natural language and converts it into structured Excalidraw elements, making brainstorming and documentation faster and hands-free.
 
 ## ✨ Features
 
-- **🎙️ Voice Control**: Create shapes, select tools, and modify properties using voice commands.
-- **✏️ Hand-drawn Style**: Maintains the classic rough-sketch aesthetic of Excalidraw.
-- **🛠️ Standard Tools**: Supports Rectangles, Circles, Arrows, Lines, and Free-draw pencils.
-- **🎨 Property Customization**: Change stroke color, background fill, and stroke width via voice or UI.
-- **💾 Local Storage**: Automatically saves your work to the browser.
-- **🌓 Dark/Light Mode**: Voice-activated theme switching.
-
-## 🗣️ Voice Commands (Examples)
-
-| Intent | Voice Command | Action |
-| :--- | :--- | :--- |
-| **Select Tool** | *"Select rectangle"*, *"Pick pencil"* | Switches the active tool. |
-| **Draw Shape** | *"Draw a circle"*, *"Add a square"* | Places the shape on the center of the screen. |
-| **Change Color** | *"Color red"*, *"Make it blue"* | Changes the stroke color of the selected element. |
-| **Edit Actions** | *"Undo"*, *"Redo"*, *"Clear canvas"* | Performs the respective editor action. |
+- **🎙️ AI Voice Assistant**: Understands natural language descriptions and context.
+- **📊 Automatic Diagramming**: Converts spoken descriptions of processes into **Mermaid.js** flowcharts and renders them as Excalidraw elements.
+- **📝 Smart Note Taking**: Dictate notes, checklists, and summaries that are automatically formatted and grouped.
+- **🔄 Context-Aware Updates**: The assistant remembers conversation history, allowing you to refine diagrams or add to notes (e.g., "Add a step after the login process").
+- **🎨 Intelligent Layout**: Automatically positions new elements to avoid overlap and groups related content.
+- **💾 Local Storage**: Persists your canvas state.
 
 ## 🛠️ Tech Stack
 
-- **Frontend**: React.js / TypeScript
-- **Canvas Library**: Rough.js / HTML5 Canvas
-- **Voice Recognition**: Web Speech API / `react-speech-recognition`
-- **State Management**: Context API / Redux
-- **Styling**: Tailwind CSS / CSS Modules
+- **Framework**: [Next.js](https://nextjs.org/) (React)
+- **Language**: TypeScript
+- **Whiteboard Engine**: [Excalidraw](https://excalidraw.com/)
+- **AI Processing**: Mistral AI / OpenAI API
+- **Styling**: Tailwind CSS
+- **Icons**: Lucide React
 
 ## 🚀 Getting Started
 
 Follow these steps to set up the project locally.
 
 ### Prerequisites
-* Node.js (v14 or higher)
-* npm or yarn
+
+- Node.js (v18 or higher recommended)
+- npm or yarn
+- An API key for **Mistral AI** or **OpenAI**
 
 ### Installation
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/chitranshuajmera0000/Voice-Driven-Excalidraw-Clone
-   cd your-repo
-   ```
+1.  **Clone the repository**
+
+    ```bash
+    git clone https://github.com/chitranshuajmera0000/Voice-Driven-Excalidraw-Clone.git
+    cd Voice-Driven-Excalidraw-Clone
+    ```
 
 2.  **Install dependencies**
 
@@ -62,15 +58,41 @@ Follow these steps to set up the project locally.
     yarn install
     ```
 
-3.  **Start the development server**
+3.  **Configure Environment Variables**
+
+    Create a `.env.local` file in the root directory (or rename `.env.example`):
 
     ```bash
-    npm start
-    # or
-    yarn start
+    cp .env.example .env.local
     ```
 
-4.  Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+    Add your API key:
+
+    ```env
+    MISTRAL_API_KEY=your_api_key_here
+    # or
+    OPENAI_API_KEY=your_api_key_here
+    ```
+
+4.  **Start the development server**
+
+    ```bash
+    npm run dev
+    # or
+    yarn dev
+    ```
+
+5.  Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+
+## 💡 Usage
+
+1.  Click the **Microphone** icon in the bottom toolbar.
+2.  Speak your command. Examples:
+    *   *"Create a flowchart for a user login system."*
+    *   *"Add a note with a checklist for launch requirements."*
+    *   *"Update the diagram to include a password reset step."*
+3.  Watch as the AI generates and places the elements on the canvas.
+4.  Toggle **Continuous Mode** for hands-free interaction during meetings.
 
 ## 🤝 Contributing
 
@@ -88,6 +110,6 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 ## 📞 Contact
 
-Project maintainer on GitHub.
+**Chitranshu Ajmera** - [GitHub Profile](https://github.com/chitranshuajmera0000)
 
-Project Link: https://voice-driven-excalidraw-clone.vercel.app/
+Project Link: [https://github.com/chitranshuajmera0000/Voice-Driven-Excalidraw-Clone](https://github.com/chitranshuajmera0000/Voice-Driven-Excalidraw-Clone)
